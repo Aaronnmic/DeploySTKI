@@ -95,8 +95,19 @@ Distribusi kategori cuaca menggambarkan jumlah data untuk setiap label:
             X = data_filtered[['Tn', 'Tx', 'Tavg', 'RH_avg']]  # Fitur numerik utama
             y = data_filtered['weather_category']  # Label kategori
 
+            # Memastikan tidak ada nilai kosong atau tak terhingga dalam dataset
+            X = X.replace([np.inf, -np.inf], np.nan).dropna()
+            y = y[X.index]  # Sinkronkan label dengan fitur yang telah difilter
+
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+            # Pastikan tidak ada nilai kosong setelah split
+            X_train = X_train.dropna()
+            y_train = y_train[X_train.index]
+            X_test = X_test.dropna()
+            y_test = y_test[X_test.index]
+
+            # Inisialisasi dan pelatihan model
             model = LogisticRegression(max_iter=1000)
             model.fit(X_train, y_train)
 
