@@ -11,10 +11,9 @@ from sklearn.metrics import classification_report, confusion_matrix
 st.title("Klasifikasi Cuaca Berdasarkan Deskripsi")
 st.write("Proyek ini bertujuan untuk mengklasifikasikan cuaca berdasarkan data iklim seperti suhu, kelembapan, dan curah hujan.")
 
-# Upload Dataset
-uploaded_file = st.file_uploader("Upload Dataset CSV", type="csv")
-if uploaded_file is not None:
-    data = pd.read_csv(uploaded_file)  # Memperbaiki kesalahan membaca dataset
+# Baca Dataset Langsung dari File Lokal
+try:
+    data = pd.read_csv("climate_data.csv")
     st.write("Dataset berhasil dimuat! Berikut adalah beberapa baris awal:")
     st.write(data.head())
 
@@ -67,3 +66,6 @@ if uploaded_file is not None:
     fig, ax = plt.subplots()
     sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=model.classes_, yticklabels=model.classes_, ax=ax)
     st.pyplot(fig)
+
+except FileNotFoundError:
+    st.error("Dataset tidak ditemukan. Pastikan file climate_data.csv ada di direktori aplikasi.")
