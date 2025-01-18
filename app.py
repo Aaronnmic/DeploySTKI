@@ -6,6 +6,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
+from io import StringIO  # Tambahkan ini untuk menangkap output
 
 # Judul Aplikasi
 st.title("Klasifikasi Cuaca Berdasarkan Deskripsi")
@@ -19,11 +20,11 @@ try:
 
     # Eksplorasi Data Awal (EDA)
     st.subheader("Informasi Dataset")
-    st.text("Info Dataset:")
-    buffer = []
-    data.info(buf=buffer)
-    info_str = "\n".join(buffer)
-    st.text(info_str)
+    buffer = StringIO()
+    data.info(buf=buffer)  # Tangkap output data.info() ke buffer
+    s = buffer.getvalue()
+    st.text(s)
+
     st.write("Statistik Dataset")
     st.write(data.describe())
 
