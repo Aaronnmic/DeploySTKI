@@ -14,13 +14,17 @@ st.write("Proyek ini bertujuan untuk mengklasifikasikan cuaca berdasarkan data i
 # Upload Dataset
 uploaded_file = st.file_uploader("Upload Dataset CSV", type="csv")
 if uploaded_file is not None:
-    data = pd.read_csv(climate_data.csv)
+    data = pd.read_csv(uploaded_file)  # Memperbaiki kesalahan membaca dataset
     st.write("Dataset berhasil dimuat! Berikut adalah beberapa baris awal:")
     st.write(data.head())
 
     # Eksplorasi Data Awal (EDA)
     st.subheader("Informasi Dataset")
-    st.write(data.info())
+    st.text("Info Dataset:")
+    buffer = []
+    data.info(buf=buffer)
+    info_str = "\n".join(buffer)
+    st.text(info_str)
     st.write("Statistik Dataset")
     st.write(data.describe())
 
