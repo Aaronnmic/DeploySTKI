@@ -21,8 +21,29 @@ Kategori cuaca yang digunakan adalah sebagai berikut:
 # Baca Dataset Langsung dari File Lokal
 try:
     data = pd.read_csv("climate_data.csv")
-    st.write("Dataset berhasil dimuat! Berikut adalah beberapa baris awal:")
-    st.write(data.head())
+    st.write("Dataset berhasil dimuat!")
+
+    # Tampilkan seluruh dataset
+    st.subheader("Dataset Lengkap")
+    st.write("Berikut adalah dataset lengkap yang digunakan:")
+    st.dataframe(data)
+
+    # Tambahkan opsi untuk filter dataset
+    st.sidebar.subheader("Filter Dataset")
+    min_rr = st.sidebar.slider("Curah Hujan Minimum", 0, int(data["RR"].max()), 0)
+    max_rr = st.sidebar.slider("Curah Hujan Maksimum", min_rr, int(data["RR"].max()), int(data["RR"].max()))
+
+    filtered_data = data[(data["RR"] >= min_rr) & (data["RR"] <= max_rr)]
+    st.write(f"Dataset setelah filter (Curah Hujan: {min_rr}-{max_rr} mm):")
+    st.dataframe(filtered_data)
+
+    # Opsi untuk mengunduh dataset
+    st.download_button(
+        label="Unduh Dataset",
+        data=filtered_data.to_csv(index=False),
+        file_name="filtered_dataset.csv",
+        mime="text/csv",
+    )
 
     # Eksplorasi Data Awal (EDA)
     st.subheader("Informasi Dataset")
@@ -72,9 +93,9 @@ Distribusi kategori cuaca menggambarkan jumlah data untuk setiap label:
 
     st.subheader("Laporan Klasifikasi")
     st.write("""
-Laporan klasifikasi menunjukkan performa model untuk setiap label:
-- **Precision**: Proporsi prediksi benar terhadap total prediksi untuk label tersebut.
-- **Recall**: Proporsi prediksi benar terhadap total data aktual untuk label tersebut.
+Penjelasan metrik:
+- **Precision**: Proporsi prediksi benar untuk label tertentu.
+- **Recall**: Proporsi data aktual yang berhasil diprediksi dengan benar untuk label tertentu.
 - **F1-Score**: Rata-rata harmonis antara precision dan recall.
 """)
     st.text(classification_report(y_test, y_pred))
@@ -83,9 +104,9 @@ Laporan klasifikasi menunjukkan performa model untuk setiap label:
     conf_matrix = confusion_matrix(y_test, y_pred)
     st.subheader("Confusion Matrix")
     st.write("""
-Confusion Matrix menunjukkan jumlah prediksi benar dan salah untuk setiap label.
-- Baris mewakili label sebenarnya (Actual).
-- Kolom mewakili label yang diprediksi (Predicted).
+Confusion Matrix menunjukkan jumlah prediksi benar dan salah untuk setiap kategori cuaca:
+- **Baris** mewakili label sebenarnya (Actual).
+- **Kolom** mewakili prediksi model (Predicted).
 """)
     fig, ax = plt.subplots()
     sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=model.classes_, yticklabels=model.classes_, ax=ax)
